@@ -1,6 +1,13 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
+
+from myapp import settings
 from .models import *
+from email import message
+from re import template
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
 
 
 def index(request):
@@ -35,5 +42,45 @@ def property_page(request):
 
 def single_property(request, pk):
     data = Property.objects.get(pk=pk)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        content = request.POST.get('content')
+        template = loader.get_template('mail_form.txt')
+
+        context = {'name': name, 'email': email,
+                   'subject': subject, 'content': content}
+        message = template.render(context)
+        email = EmailMultiAlternatives(
+            subject, message,
+            'Easy Agency',
+            [settings.EMAIL_HOST_USER, email])
+        email.content_subtype = 'html'
+        email.send()
+        # messages.success(request, 'Message Sent Succesfully')
+        return redirect('property', pk)
     context = {'data': data}
     return render(request, 'property-single.html', context)
+
+
+def contact_page(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        content = request.POST.get('content')
+        template = loader.get_template('mail_form.txt')
+
+        context = {'name': name, 'email': email,
+                   'subject': subject, 'content': content}
+        message = template.render(context)
+        email = EmailMultiAlternatives(
+            subject, message,
+            'Easy Agency',
+            [settings.EMAIL_HOST_USER, email])
+        email.content_subtype = 'html'
+        email.send()
+        messages.success(request, 'Message Sent Succesfully')
+        return redirect('contact')
+    return render(request, 'contact.html')

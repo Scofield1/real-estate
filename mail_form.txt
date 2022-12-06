@@ -1,0 +1,4 @@
+{{ name }}<br><br>
+{{ email }}<br><br>
+{{ subject }}<br><br>
+{{ content }}<br><br>

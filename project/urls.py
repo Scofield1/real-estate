@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('our-agents', views.agents_page, name='agent'),
     path('about-us', views.about_us, name='about'),
+    path('contact-us', views.contact_page, name='contact'),
     path('properties', views.property_page, name='properties'),
     path('property/<str:pk>', views.single_property, name='property'),
 ]
